@@ -1,0 +1,89 @@
+[gd_scene load_steps=2 format=3 uid="uid://dfhuxk4nsmtkq"]
+
+[sub_resource type="GDScript" id="GDScript_8a1dc"]
+script/source = "extends Node2D
+
+# 7 - to create a var for main theme as soon as start to be able to work with here
+@onready var main = get_node(\"/root/Main\")
+
+# 11 - create a signal to forward to main when player get hit
+signal kill_player
+
+# 1 - scene generator variable
+var goblin_scene := preload(\"res://scenes/goblin.tscn\")
+# 2 - spawn points array
+var spawn_points := []
+
+func _ready():
+	# 3 - to iterate throw each child inside this node except timer
+	for i in get_children() :
+		if i is Marker2D:
+			spawn_points.append(i)
+
+
+func _on_timer_timeout():
+	# 12 - check how many enemies are created
+	var enemies = get_tree().get_nodes_in_group(\"enemies\")
+	if enemies.size() < get_parent().max_enemies:
+		#we handle enemy generation here
+		# 4 - pick a random spawn point
+		var rand_spawn = spawn_points[randi() % spawn_points.size()]
+		# 5 - instantiate goblin scene
+		var goblin = goblin_scene.instantiate() #this will span at (0,0)
+		# 6-  to instantiate at specific spawn points:
+		goblin.position = rand_spawn.position
+		# 10 - return to goblin scene to call the hit signal
+		goblin.touch_player.connect(enter_player)
+		# 8 - generate
+		main.add_child(goblin)
+		# 11 - add maximum enemies from main
+		goblin.add_to_group(\"enemies\")
+
+# 9 - recieve hit signal from goblin scene
+func enter_player():
+	kill_player.emit()
+"
+
+[node name="EnemySpawner" type="Node2D"]
+script = SubResource("GDScript_8a1dc")
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2(360, -50)
+
+[node name="Marker2D2" type="Marker2D" parent="."]
+position = Vector2(405, -50)
+
+[node name="Marker2D3" type="Marker2D" parent="."]
+position = Vector2(450, -50)
+
+[node name="Marker2D4" type="Marker2D" parent="."]
+position = Vector2(-50, 350)
+
+[node name="Marker2D5" type="Marker2D" parent="."]
+position = Vector2(-50, 395)
+
+[node name="Marker2D6" type="Marker2D" parent="."]
+position = Vector2(-50, 440)
+
+[node name="Marker2D7" type="Marker2D" parent="."]
+position = Vector2(360, 800)
+
+[node name="Marker2D8" type="Marker2D" parent="."]
+position = Vector2(405, 800)
+
+[node name="Marker2D9" type="Marker2D" parent="."]
+position = Vector2(450, 800)
+
+[node name="Marker2D10" type="Marker2D" parent="."]
+position = Vector2(800, 350)
+
+[node name="Marker2D11" type="Marker2D" parent="."]
+position = Vector2(800, 395)
+
+[node name="Marker2D12" type="Marker2D" parent="."]
+position = Vector2(800, 440)
+
+[node name="Timer" type="Timer" parent="."]
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

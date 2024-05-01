@@ -1,0 +1,84 @@
+[gd_scene load_steps=5 format=3 uid="uid://beky07kqs4124"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_41fau"]
+bg_color = Color(0.32549, 0.141176, 0.45098, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cuvst"]
+bg_color = Color(0.301961, 0.643137, 0.313726, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t07xt"]
+bg_color = Color(0.0901961, 0.27451, 0.129412, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o61ok"]
+bg_color = Color(0.207843, 0.47451, 0.411765, 1)
+
+[node name="GameOver" type="CanvasLayer"]
+
+[node name="Panel" type="Panel" parent="."]
+offset_left = 184.0
+offset_top = 308.0
+offset_right = 584.0
+offset_bottom = 508.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_41fau")
+
+[node name="GameOverLabel" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -46.0
+offset_top = -78.0
+offset_right = 46.0
+offset_bottom = -52.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 30
+text = "GAME OVER"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="WavesSurvivedLabel" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -143.0
+offset_top = -22.5
+offset_right = 143.0
+offset_bottom = 22.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 30
+text = "WAVES SURVIVED: 0
+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -125.0
+offset_top = 32.0
+offset_right = 125.0
+offset_bottom = 82.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_cuvst")
+theme_override_styles/hover = SubResource("StyleBoxFlat_t07xt")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_o61ok")
+text = "PLAY AGAIN
+"

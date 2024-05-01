@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://fxdswo0anstc"]
+
+[ext_resource type="Script" path="res://scripts/bullet.gd" id="1_5a2u0"]
+[ext_resource type="Texture2D" uid="uid://c6tghu7lckjdk" path="res://assets/red_shot.png" id="2_26p8t"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_6woth"]
+radius = 5.0
+
+[node name="Bullet" type="Area2D"]
+collision_layer = 8
+collision_mask = 5
+script = ExtResource("1_5a2u0")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(0.00775001, 0.00750001)
+texture = ExtResource("2_26p8t")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_6woth")
+
+[node name="BulletMemoryDeath" type="Timer" parent="."]
+wait_time = 3.0
+autostart = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="BulletMemoryDeath" to="." method="_on_bullet_memory_death_timeout"]

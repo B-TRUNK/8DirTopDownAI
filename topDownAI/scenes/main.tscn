@@ -1,0 +1,80 @@
+[gd_scene load_steps=9 format=3 uid="uid://ctkr51jlfha7t"]
+
+[ext_resource type="PackedScene" uid="uid://m321cuvwfutj" path="res://scenes/world.tscn" id="1_u42td"]
+[ext_resource type="PackedScene" uid="uid://c2aec77xj68ir" path="res://scenes/player.tscn" id="2_ml6yb"]
+[ext_resource type="Script" path="res://scripts/BulletManager.gd" id="3_4rx5f"]
+[ext_resource type="PackedScene" uid="uid://dfhuxk4nsmtkq" path="res://scenes/enemy_spawner.tscn" id="3_v6wrb"]
+[ext_resource type="PackedScene" uid="uid://fxdswo0anstc" path="res://scenes/bullet.tscn" id="4_gnk3o"]
+[ext_resource type="PackedScene" uid="uid://da8kgnx555y53" path="res://scenes/hud.tscn" id="6_itqmy"]
+[ext_resource type="PackedScene" uid="uid://beky07kqs4124" path="res://scenes/game_over.tscn" id="7_2r2uf"]
+
+[sub_resource type="GDScript" id="GDScript_ekq6w"]
+script/source = "extends Node
+
+@export var max_enemies : int
+
+var wave : int
+var lives : int
+
+func _ready():
+	
+	new_game()
+	#connect manually to button
+	$GameOver/Button.pressed.connect(new_game)
+	
+func new_game():
+	max_enemies = 10
+	wave = 1
+	lives = 1
+	# 3 - resetting game groups so that game restarts correctly without old objects
+	get_tree().call_group(\"enemies\" ,\"queue_free\")
+	get_tree().call_group(\"bullets\" ,\"queue_free\")
+	get_tree().call_group(\"items\" ,\"queue_free\")
+	$Player.reset_player_in_new_game()
+	#end of resetting
+	$Hud/LivesLabel.text = \"X\" + str(lives)
+	$Hud/WaveLabel.text = \"WAVE: \" + str(wave)
+	$Hud/EnemiesLabel.text = \"X \" + str(max_enemies)
+	
+	# 2 -  Working with Game Over Mechanism
+	$GameOver.hide()
+	#then change Node->Process->Mode to when paused from expector to stop it on ready
+	get_tree().paused = false
+	
+	
+
+func _on_enemy_spawner_kill_player():
+	#print (\"Player Klled\")
+	lives -= 1
+	$Hud/LivesLabel.text = \"X\" + str(lives)
+	# 2 -1
+	if lives <= 0 :
+		# player is dead , so game need to be pause
+		get_tree().paused = true
+		$GameOver/WavesSurvivedLabel.text = \"WAVES SURVIVED: \" + str(wave - 1)
+		$GameOver.show()
+	
+"
+
+[node name="Main" type="Node"]
+script = SubResource("GDScript_ekq6w")
+
+[node name="TileMap" parent="." instance=ExtResource("1_u42td")]
+
+[node name="Player" parent="." instance=ExtResource("2_ml6yb")]
+
+[node name="BulletManager" type="Node2D" parent="."]
+script = ExtResource("3_4rx5f")
+bullet_scene = ExtResource("4_gnk3o")
+
+[node name="EnemySpawner" parent="." instance=ExtResource("3_v6wrb")]
+
+[node name="Hud" parent="." instance=ExtResource("6_itqmy")]
+offset = Vector2(0, 768)
+transform = Transform2D(1, 0, 0, 1, 0, 768)
+
+[node name="GameOver" parent="." instance=ExtResource("7_2r2uf")]
+process_mode = 2
+
+[connection signal="shoot" from="Player" to="BulletManager" method="_on_player_shoot"]
+[connection signal="kill_player" from="EnemySpawner" to="." method="_on_enemy_spawner_kill_player"]
